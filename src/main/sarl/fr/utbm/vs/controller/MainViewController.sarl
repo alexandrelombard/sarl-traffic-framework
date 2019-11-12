@@ -1,0 +1,12 @@
+/** 
+ * 
+ */
+package fr.utbm.vs.controller
+
+/** 
+ * Main view controller
+ * @author Alexandre Lombard
+ * 
+ */
+class MainViewController extends Object {
+}

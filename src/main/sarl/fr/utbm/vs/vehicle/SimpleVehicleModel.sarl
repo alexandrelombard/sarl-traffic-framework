@@ -1,0 +1,75 @@
+/** 
+ * 
+ */
+package fr.utbm.vs.vehicle
+
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
+import org.eclipse.xtend.lib.annotations.Accessors
+
+/** 
+ * Simple vehicle model applicable to 2D motion
+ * @author Alexandre Lombard
+ * 
+ */
+class SimpleVehicleModel extends Object {
+	
+	@Accessors(PUBLIC_GETTER)
+	var position : Vector3D = Vector3D.ZERO
+
+	@Accessors(PUBLIC_GETTER)
+	var velocity : Vector3D = Vector3D.ZERO
+
+	@Accessors(PUBLIC_SETTER)
+	var acceleration : Double = 0.0
+
+	@Accessors(PUBLIC_SETTER)
+	var wheelBase : Double = 4.0
+
+	@Accessors(PUBLIC_SETTER)
+	var wheelAngle : Double = 0.0
+	
+	/**
+	 * Update the vehicle
+	 */
+	def update(deltaTime : Double) {
+		synchronized(this) {
+			// Get the current direction angle
+			val direction = this.velocity.alpha
+			
+			// Compute the new speed
+			val newSpeed = this.velocity.norm + this.acceleration * deltaTime
+			
+			// Compute the traveled distance during the deltaTime assuming a constant acceleration for the period
+			val traveledDistance = this.velocity.norm * deltaTime +
+											0.5 * this.acceleration * (deltaTime * deltaTime)
+											
+			// Compute the rotation properties according to the wheel angle
+			val radius = this.wheelBase / Math.tan(this.wheelAngle)
+			
+			val centerAngle = direction + Math.PI / 2.0
+			val centerDirection = new Vector3D(centerAngle, 0.0)		// Elevation is ignored
+			val center = this.position.add(radius, centerDirection)	// The sign of the radius is considered here
+			
+			val centralAngle = traveledDistance / radius				// Warning: is the radius sign relevant here?
+			
+			// Compute the new direction angle according to the wheel angle and the acceleration
+			val newDirection = direction + centralAngle
+			
+			// Compute the new velocity
+			val newVelocity = new Vector3D(newSpeed, new Vector3D(newDirection, 0.0))	// Elevation is still ignored
+			
+			// Compute the new position
+			val dx = this.position.x - center.x
+			val dy = this.position.y - center.y
+			val newPosition = new Vector3D(
+				dx * Math.cos(centralAngle) - dy * Math.sin(centralAngle),
+				dx * Math.sin(centralAngle) + dy * Math.cos(centralAngle),
+				0.0)
+			
+			// Update everything
+			this.velocity = newVelocity
+			this.position = newPosition
+		}
+	}
+	
+}

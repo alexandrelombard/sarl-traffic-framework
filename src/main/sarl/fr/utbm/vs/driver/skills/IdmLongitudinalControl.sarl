@@ -1,0 +1,30 @@
+/** 
+ * 
+ */
+package fr.utbm.vs.driver.skills
+
+import fr.utbm.vs.driver.capacities.LongitudinalControl
+import io.sarl.core.Logging
+
+/** 
+ * @author alombard
+ * 
+ */
+skill IdmLongitudinalControl implements LongitudinalControl {
+
+	def install {
+		//
+	}
+
+	def uninstall {
+		//
+	}
+
+	override getSafeSpeed(distance : Double) : Double {
+		// TODO Auto-generated code.
+	}
+
+	override getSafeAcceleration(distance : Double) : Double {
+		// TODO Auto-generated code.
+	}
+}

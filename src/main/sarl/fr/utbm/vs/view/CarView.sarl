@@ -1,0 +1,12 @@
+/** 
+ * 
+ */
+package fr.utbm.vs.view
+
+/** 
+ * View of a car
+ * @author Alexandre Lombard
+ * 
+ */
+class CarView extends Object {
+}

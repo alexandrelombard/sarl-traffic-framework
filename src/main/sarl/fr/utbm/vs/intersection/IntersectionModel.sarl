@@ -1,0 +1,145 @@
+/** 
+ * 
+ */
+package fr.utbm.vs.intersection
+
+import java.util.Set
+import java.util.logging.Logger
+import org.eclipse.xtend.lib.annotations.Accessors
+import java.util.Collections
+import java.util.Collection
+import java.util.Map
+
+/** 
+ * Abstract intersection model
+ * @author Alexandre Lombard
+ * 
+ */
+class IntersectionModel<Lane> extends Object {
+
+	val LOG = Logger.getLogger(class.name)
+	
+	/** The entrances of the intersection */
+	val entrances = <Lane>newHashSet
+	
+	/** The exists of the intersection */
+	val exits = <Lane>newHashSet
+	
+	/** The allowed movements within the intersection mapping each entrance to its potential exits */
+	val movements = <Lane, Set<Lane>>newHashMap
+	
+	/** The conflicts between movements */
+	val conflicts = <Movement<Lane>, Set<Movement<Lane>>>newHashMap
+	
+	/**
+	 * Adds an entrance to the intersection
+	 */
+	def addEntrance(lane: Lane) {
+		this.entrances.add(lane) 
+	}
+	
+	/**
+	 * Adds an exit to the intersection
+	 */
+	def addExit(lane: Lane) {
+		this.exits.add(lane)
+	}
+	
+	/**
+	 * Gets all the entrances of the intersection
+	 */
+	def getEntrances() : Collection<Lane> {
+		return Collections.unmodifiableCollection(this.entrances)
+	}
+	
+	/**
+	 * Gets all the exits of the intersection
+	 */
+	def getExits() : Collection<Lane> {
+		return Collections.unmodifiableCollection(this.exits)
+	}
+	
+	/**
+	 * Registers a possible movement from an entrance to an exit
+	 */
+	def registerMovement(entrance: Lane, exit: Lane) {
+		if(!this.entrances.contains(entrance)) {
+			this.addEntrance(entrance)
+			
+			LOG.info("Registering movement on an unregistered entrance")
+		}
+
+		if (!this.exits.contains(exit)) {
+			this.addExit(exit)
+
+			LOG.info("Registering movement on an unregistered exit")
+		}
+		
+		if(!this.movements.keySet.contains(entrance)) {
+			this.movements.put(entrance, newHashSet)
+		}
+		
+		this.movements.get(entrance).add(exit)
+	}
+	
+	/**
+	 * @return <code>true</code> if a movement is registered (i.e. possible)
+	 */
+	def isMovementRegistered(entrance: Lane, exit: Lane): Boolean {
+		if (!this.movements.containsKey(entrance)) {
+			return false
+		}
+			
+		return this.movements.get(entrance).contains(exit)
+	}
+	
+	def getMovements() : Map<Lane, Set<Lane>> {
+		return Collections.unmodifiableMap(this.movements)
+	}
+	
+	/**
+	 * Registers a conflict between two lanes
+	 */
+	def registerConflict(firstEntrance : Lane, firstExit : Lane, secondEntrance : Lane, secondExit : Lane) {
+		if(!isMovementRegistered(firstEntrance, firstExit)) {
+			registerMovement(firstEntrance, firstExit)
+
+			LOG.warning("Registering conflict on an unregistered movement: " + firstEntrance + ", " + firstExit)
+		}
+		
+		if(!isMovementRegistered(secondEntrance, secondExit)) {
+			registerMovement(secondEntrance, secondExit)
+
+			LOG.warning("Registering conflict on an unregistered movement: " + secondEntrance + ", " + secondExit)
+		}
+		
+		val firstMovement = new Movement(firstEntrance, firstExit)
+		val secondMovement = new Movement(secondEntrance, secondExit)
+		
+		if(!this.conflicts.containsKey(firstMovement)) {
+			this.conflicts.put(firstMovement, newHashSet)
+		}
+		
+		this.conflicts.get(firstMovement).add(secondMovement)
+		
+		if(!this.conflicts.containsKey(secondMovement)) {
+			this.conflicts.put(secondMovement, newHashSet)
+		}
+		
+		this.conflicts.get(secondMovement).add(firstMovement)
+	}
+	
+	static class Movement<Lane> extends Object {
+		@Accessors(PUBLIC_GETTER)
+		val entrance : Lane
+
+		@Accessors(PUBLIC_GETTER)
+		val exit : Lane
+
+		new(entrance : Lane, exit : Lane) {
+			this.entrance = entrance
+			this.exit = exit
+		}
+	}
+	
+}

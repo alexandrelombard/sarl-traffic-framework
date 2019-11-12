@@ -1,0 +1,29 @@
+/** 
+ * 
+ */
+package fr.utbm.vs.view
+
+import javafx.application.Application
+import javafx.stage.Stage
+import com.graphhopper.GraphHopper
+import com.graphhopper.reader.osm.GraphHopperOSM
+
+/** 
+ * @author Alexandre Lombard
+ * 
+ */
+class MainView extends Application {
+	
+	var hopper: GraphHopperOSM
+	
+	def initGraphHopper() {
+		this.hopper = new GraphHopperOSM()
+		this.hopper.OSMFile = this.class.getResource("/fr/utbm/vs/maps/thierrymieg.osm").file
+		this.hopper.importOrLoad
+	}
+	
+	def start(primaryStage : Stage) throws Exception {
+		initGraphHopper
+	}
+	
+}

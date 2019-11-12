@@ -1,0 +1,25 @@
+/** 
+ * 
+ */
+package fr.utbm.vs.intersection.manager
+
+import io.sarl.core.Initialize
+import io.sarl.core.Logging
+import io.sarl.core.Schedules
+
+import fr.utbm.vs.intersection.IntersectionModel
+
+/** 
+ * Simple traffic light manager
+ * @author Alexandre Lombard
+ * 
+ */
+agent TrafficLightController {
+	uses Logging, Schedules
+	
+	var intersection: IntersectionModel<Object>	// TODO Change this
+
+	on Initialize {
+		val movements = this.intersection.movements
+	}
+}

@@ -1,0 +1,17 @@
+/** 
+ * 
+ */
+package fr.utbm.vs.spawner
+
+import io.sarl.core.Logging
+
+/** 
+ * Simple vehicle spawner
+ * @author Alexandre Lombard
+ * 
+ */
+agent LocatedVehicleSpawner {
+	uses Logging
+
+
+}

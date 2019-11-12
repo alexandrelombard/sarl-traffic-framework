@@ -1,0 +1,26 @@
+/** 
+ * 
+ */
+package fr.utbm.vs.driver.capacities
+
+/** 
+ * Capacity to compute the optimal speed in order to respect the safety distance with
+ * the preceding vehicle
+ * @author Alexandre Lombard
+ * 
+ */
+capacity LongitudinalControl {
+	
+	/**
+	 * Computes the expected safe speed according to the acceleration
+	 * @param distance the distance 
+	 */
+	def getSafeSpeed(distance: Double): Double
+	
+	/**
+	 * Computes the expected acceleration to reach the safe speed
+	 * @param distance the distance
+	 */
+	def getSafeAcceleration(distance: Double): Double
+	
+}

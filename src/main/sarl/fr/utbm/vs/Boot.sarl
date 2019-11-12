@@ -1,0 +1,23 @@
+/** 
+ * 
+ */
+package fr.utbm.vs
+
+import io.sarl.core.Initialize
+import io.sarl.core.Logging
+
+import javafx.application.Platform
+
+/** 
+ * @author alombard
+ * 
+ */
+agent Boot {
+	uses Logging
+
+	on Initialize {
+		Platform.runLater [
+			
+		]
+	}
+}
